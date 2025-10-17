@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api", // backend base URL
+  baseURL: "https://movie-rating-website-1.onrender.com/api", // backend base URL
   withCredentials: true, // ✅ send cookies (JWT)
 });
 
