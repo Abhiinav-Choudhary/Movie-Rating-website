@@ -7,6 +7,7 @@ import Discussion from "./pages/Discussion";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import MoviePage from "./pages/MoviePage"; 
+import SearchMovies from "./pages/SearchMovies";
 import toast, { Toaster } from "react-hot-toast";
 
 
@@ -23,6 +24,7 @@ const App = () => {
       <Route path="/discussion" element={<Discussion />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/movie/:id" element={<MoviePage />} /> 
+      <Route path="/search" element={<SearchMovies />} />
     </Routes>
     
 </div>
