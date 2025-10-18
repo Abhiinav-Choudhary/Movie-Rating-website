@@ -12,13 +12,15 @@ const StarRating = ({ rating }) => {
     stars.push(
       <span
         key={i}
-        className={`text-xl ${i <= Math.round(rating) ? "text-yellow-400" : "text-gray-600"}`}
+        className={`text-base sm:text-lg md:text-xl ${
+          i <= Math.round(rating) ? "text-yellow-400" : "text-gray-600"
+        }`}
       >
         ★
       </span>
     );
   }
-  return <div className="flex justify-center mb-2">{stars}</div>;
+  return <div className="flex justify-center flex-wrap mb-2">{stars}</div>;
 };
 
 export default function MoviePage() {
@@ -29,12 +31,11 @@ export default function MoviePage() {
   const [trailer, setTrailer] = useState("");
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState([]);
-
   const [showPopup, setShowPopup] = useState(false);
   const [rating, setRating] = useState(5);
   const [review, setReview] = useState("");
 
-  // Fetch movie details from TMDB
+  // Fetch movie details
   const fetchMovie = async () => {
     try {
       setLoading(true);
@@ -74,7 +75,7 @@ export default function MoviePage() {
     fetchMovie();
   }, [id]);
 
-  // Compute average rating including user reviews
+  // Compute average rating
   const averageRating =
     reviews.length > 0
       ? ((movie.rating * 10 + reviews.reduce((a, r) => a + r.rating, 0)) /
@@ -87,17 +88,13 @@ export default function MoviePage() {
       toast.error("Your review exceeds 150 words!");
       return;
     }
-
     if (review.trim().length === 0) {
       toast.error("Please write a short reason for your rating!");
       return;
     }
-
     const newReview = { rating: parseFloat(rating), review: review.trim() };
     setReviews([...reviews, newReview]);
-
     toast.success(`You rated "${movie.title}" ${rating}/10!`);
-
     setShowPopup(false);
     setReview("");
     setRating(5);
@@ -108,7 +105,7 @@ export default function MoviePage() {
 
   return (
     <div
-      className="relative min-h-screen flex items-center justify-center bg-black text-white overflow-hidden"
+      className="relative min-h-screen flex flex-col items-center justify-center bg-black text-white overflow-hidden px-4 sm:px-6"
       style={{
         backgroundImage: `url(${movie.poster})`,
         backgroundSize: "cover",
@@ -118,7 +115,7 @@ export default function MoviePage() {
       {/* Back Button */}
       <button
         onClick={() => navigate("/home")}
-        className="absolute top-5 left-5 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm transition z-20"
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 bg-white/10 hover:bg-white/20 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm transition z-20"
       >
         ← Back
       </button>
@@ -131,29 +128,31 @@ export default function MoviePage() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="relative z-10 max-w-4xl w-full bg-gray-900/70 p-10 rounded-3xl shadow-2xl text-center border border-gray-700"
+        className="relative z-10 w-full max-w-5xl bg-gray-900/70 p-5 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl shadow-2xl text-center border border-gray-700"
       >
         {/* Poster */}
         <motion.img
           src={movie.poster}
           alt={movie.title}
-          className="w-full h-[400px] object-cover rounded-xl mb-6 shadow-lg"
+          className="w-full h-64 sm:h-80 md:h-[400px] object-cover rounded-xl mb-6 shadow-lg"
         />
 
         {/* Title */}
-        <h1 className="text-5xl font-extrabold mb-2 text-yellow-400">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 text-yellow-400 break-words">
           {movie.title}
         </h1>
 
-        {/* Star Rating */}
+        {/* Rating */}
         <StarRating rating={averageRating} />
-        <p className="text-yellow-400 font-semibold mb-4">
+        <p className="text-yellow-400 font-semibold mb-4 text-sm sm:text-base">
           {averageRating}/10 ({reviews.length} review
           {reviews.length !== 1 && "s"})
         </p>
 
         {/* Description */}
-        <p className="text-gray-300 text-lg mb-6">{movie.desc}</p>
+        <p className="text-gray-300 text-base sm:text-lg mb-6 leading-relaxed text-justify sm:text-center">
+          {movie.desc}
+        </p>
 
         {/* Trailer */}
         {trailer && (
@@ -162,9 +161,8 @@ export default function MoviePage() {
             title={`${movie.title} Trailer`}
             allow="autoplay; encrypted-media"
             allowFullScreen
-            className="w-full h-[400px] rounded-xl shadow-lg mb-6"
+            className="w-full h-56 sm:h-72 md:h-[400px] rounded-xl shadow-lg mb-6"
           ></motion.iframe>
-
         )}
 
         {/* Rate Movie Button */}
@@ -172,17 +170,17 @@ export default function MoviePage() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowPopup(true)}
-          className="bg-yellow-400 text-black px-8 py-3 rounded-xl font-semibold text-lg hover:bg-yellow-300 transition"
+          className="bg-yellow-400 text-black px-6 sm:px-8 py-3 rounded-xl font-semibold text-base sm:text-lg hover:bg-yellow-300 transition"
         >
           ⭐ Rate Movie
         </motion.button>
       </motion.div>
 
-      {/* ⭐ Popup Form Modal */}
+      {/* ⭐ Popup Modal */}
       <AnimatePresence>
         {showPopup && (
           <motion.div
-            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -192,14 +190,14 @@ export default function MoviePage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-gray-900 text-white rounded-2xl p-8 w-[90%] sm:w-[450px] shadow-xl border border-gray-700 text-center"
+              className="bg-gray-900 text-white rounded-2xl p-6 sm:p-8 w-full max-w-sm sm:max-w-md shadow-xl border border-gray-700 text-center"
             >
-              <h2 className="text-2xl font-bold text-yellow-400 mb-4">
+              <h2 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-4">
                 Rate {movie.title}
               </h2>
 
               {/* Rating Slider */}
-              <label className="block text-gray-300 mb-2 text-left">
+              <label className="block text-gray-300 mb-2 text-left text-sm sm:text-base">
                 Select Rating: <span className="text-yellow-400">{rating}/10</span>
               </label>
               <input
@@ -212,7 +210,7 @@ export default function MoviePage() {
               />
 
               {/* Review Textarea */}
-              <label className="block text-gray-300 mb-2 text-left">
+              <label className="block text-gray-300 mb-2 text-left text-sm sm:text-base">
                 Reason for your rating (max 150 words):
               </label>
               <textarea
@@ -220,23 +218,23 @@ export default function MoviePage() {
                 value={review}
                 onChange={(e) => setReview(e.target.value)}
                 placeholder="Describe what you liked or disliked..."
-                className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-4"
+                className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none mb-3 text-sm sm:text-base"
               ></textarea>
-              <p className="text-sm text-gray-400 text-left mb-4">
+              <p className="text-xs sm:text-sm text-gray-400 text-left mb-4">
                 Word count: {review.trim().split(/\s+/).filter(Boolean).length}/150
               </p>
 
               {/* Buttons */}
-              <div className="flex justify-center gap-4">
+              <div className="flex justify-center flex-wrap gap-3 sm:gap-4">
                 <button
                   onClick={handleRate}
-                  className="bg-green-500 hover:bg-green-600 px-6 py-2 rounded-lg font-semibold transition"
+                  className="bg-green-500 hover:bg-green-600 px-5 sm:px-6 py-2 rounded-lg font-semibold text-sm sm:text-base transition"
                 >
                   Submit
                 </button>
                 <button
                   onClick={() => setShowPopup(false)}
-                  className="bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-lg font-semibold transition"
+                  className="bg-gray-700 hover:bg-gray-600 px-5 sm:px-6 py-2 rounded-lg font-semibold text-sm sm:text-base transition"
                 >
                   Cancel
                 </button>
